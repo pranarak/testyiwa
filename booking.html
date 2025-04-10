@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายการจองทั้งหมด</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    const apiURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?action=read';
+
+    async function fetchBookings() {
+      const res = await fetch(apiURL);
+      const data = await res.json();
+      const tableBody = document.getElementById("table-body");
+
+      tableBody.innerHTML = ""; // ล้างข้อมูลเก่า
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2 border">${row.timestamp}</td>
+          <td class="p-2 border">${row.name}</td>
+          <td class="p-2 border">${row.phone}</td>
+          <td class="p-2 border">${row.travel_date}</td>
+          <td class="p-2 border">${row.sale}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    window.onload = fetchBookings;
+  </script>
+</head>
+<body class="bg-gray-100 min-h-screen py-10 px-4">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-blue-600 text-center">รายการจองทั้งหมด</h1>
+    <div class="overflow-x-auto">
+      <table class="table-auto w-full border-collapse border border-gray-300">
+        <thead class="bg-blue-100">
+          <tr>
+            <th class="p-2 border">วันที่จอง</th>
+            <th class="p-2 border">ชื่อ</th>
+            <th class="p-2 border">เบอร์โทร</th>
+            <th class="p-2 border">วันเดินทาง</th>
+            <th class="p-2 border">Sale</th>
+          </tr>
+        </thead>
+        <tbody id="table-body" class="bg-white"></tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
