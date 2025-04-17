@@ -2,59 +2,106 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ฟอร์มจองทัวร์</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby014o6ZQL7oRwBNX-xJpXiA-I8QMJgivJD-pxhA3mAkC9ZkkilS4xJudCYjUc8P32k/exec';
-
-    function getQueryParam(name) {
-      return new URLSearchParams(window.location.search).get(name) || '';
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(135deg, #6a1b9a, #fdd835);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      color: #6a1b9a;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #6a1b9a;
+      color: white;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a148c;
+    }
+    .status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>ฟอร์มจองทัวร์</h2>
+    <form id="bookingForm">
+      <label>ชื่อ</label>
+      <input type="text" name="name" required>
+      <label>เบอร์โทร</label>
+      <input type="tel" name="phone" required>
+      <label>อีเมล</label>
+      <input type="email" name="email" required>
+      <button type="submit">ส่งข้อมูล</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
 
-    async function submitForm(event) {
-      event.preventDefault();
-      const form = document.forms['booking-form'];
+  <script>
+    const form = document.getElementById('bookingForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
       const data = {
         name: form.name.value,
         phone: form.phone.value,
-        travel_date: form.travel_date.value,
-        sale: getQueryParam('sale'),
+        email: form.email.value
       };
 
-      const response = await fetch(scriptURL, {
+      fetch('https://script.google.com/macros/s/AKfycbwDwp0TMx_Q7chtYDq4sSslo9jE9j-l4UG6d41Huvet59Lp3NzkDRwe4gaHTx3oumkw/exec', {
         method: 'POST',
         body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (response.ok) {
-        alert("ส่งข้อมูลสำเร็จแล้ว!");
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('status').innerText = "ส่งข้อมูลเรียบร้อยแล้ว!";
         form.reset();
-      } else {
-        alert("มีข้อผิดพลาดในการส่งข้อมูล");
-      }
-    }
+      })
+      .catch(error => {
+        document.getElementById('status').innerText = "เกิดข้อผิดพลาด!";
+        console.error(error);
+      });
+    });
   </script>
-</head>
-<body class="bg-gradient-to-tr from-yellow-50 to-yellow-100 min-h-screen flex items-center justify-center">
-  <div class="bg-white shadow-xl rounded-xl p-8 max-w-md w-full">
-    <h2 class="text-2xl font-bold text-center text-orange-600 mb-6">จองทัวร์</h2>
-    <form name="booking-form" onsubmit="submitForm(event)" class="space-y-4">
-      <input name="name" placeholder="ชื่อ-นามสกุล" required
-        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-orange-400" />
-      <input name="phone" placeholder="เบอร์โทรศัพท์" required
-        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-orange-400" />
-      <select name="travel_date" required
-        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-orange-400">
-        <option value="">-- เลือกวันเดินทาง --</option>
-        <option>16-20 พฤษภาคม 2568</option>
-        <option>21-25 พฤษภาคม 2568</option>
-        <option>26-30 พฤษภาคม 2568</option>
-        <option>1-4 มิถุนายน 2568</option>
-      </select>
-      <button type="submit"
-        class="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition">ส่งจอง</button>
-    </form>
-  </div>
 </body>
 </html>
